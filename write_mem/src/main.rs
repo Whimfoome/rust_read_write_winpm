@@ -12,7 +12,7 @@ fn main() {
     let pid_target: u32;
     print!("ProcessID Target: ");
     io::stdout().flush().unwrap(); // Print doesn't show without this
-    
+
     let mut pid_buffer = String::new();
     io::stdin().read_line(&mut pid_buffer).expect("Failed to read line");
     pid_target = pid_buffer.trim().parse::<u32>().unwrap();
@@ -23,30 +23,21 @@ fn main() {
         println!("OpenProcess failed. Error: {:?}", io::Error::last_os_error());
     }
 
-
     let int_address: u64;
-    print!("Memory address of var_int to read: ");
+    print!("Memory address of integer to overwrite: ");
     io::stdout().flush().unwrap(); // Print doesn't show without this
     int_address = read_line_address();
-    println!("Reading 0x{:x} ...", int_address); // Prints mem_address as hex
 
-    let int_read = read_mem::<i32>(proc_h, int_address);
-    println!("int_read: {}", int_read);
-    
-    println!();
-    
+    let int_to_write: i32;
+    print!("Overwrite to: ");
+    io::stdout().flush().unwrap(); // Print doesn't show without this
+    let mut string_buffer = String::new();
+    io::stdin().read_line(&mut string_buffer).expect("Failed to read line");
+    int_to_write = string_buffer.trim().parse::<i32>().unwrap();
 
-    let ptr_address: u64;
-    print!("Memory address of ptr2int to read: ");
-    io::stdout().flush().unwrap();
-    ptr_address = read_line_address();
-    println!("Reading 0x{:x} ...", ptr_address);
+    write_mem::<i32>(proc_h, int_address, int_to_write);
 
-    let ptr2int_read = read_mem::<u64>(proc_h, ptr_address);
-    println!("ptr2int_read: 0x{:x}", ptr2int_read);
-
-    let ptr_pointed = read_mem::<i32>(proc_h, ptr2int_read);
-    println!("value_pointed: {}", ptr_pointed);
+    println!("Overwritten successfully");
 
 
     unsafe {CloseHandle(proc_h)};
@@ -63,19 +54,15 @@ fn read_line_address() -> u64 {
     return u64::from_str_radix(address_trim, 16).unwrap();
 }
 
-fn read_mem<T: Default>(proc_h: HANDLE, address: u64) -> T {
-    use winapi::um::memoryapi::ReadProcessMemory;   // You need to enable this as feature in Cargo.toml
-
-    let mut ret: T = Default::default();
+fn write_mem<T: Default>(proc_h: HANDLE, address: u64, mut value: T) {
+    use winapi::um::memoryapi::WriteProcessMemory;   // You need to enable this as feature in Cargo.toml
 
     unsafe {
-        let rpm_return = ReadProcessMemory(proc_h, address as *mut _,
-            &mut ret as *mut T as LPVOID, std::mem::size_of::<T>(), 
+        let wpm_return = WriteProcessMemory(proc_h, address as *mut _, 
+            &mut value as *mut T as LPVOID, std::mem::size_of::<T>(), 
             NULL as *mut usize);
-        if rpm_return == FALSE {
-            println!("ReadProcessMemory failed. Error: {:?}", std::io::Error::last_os_error());
+        if wpm_return == FALSE {
+            println!("WriteProcessMemory failed. Error: {:?}", std::io::Error::last_os_error());
         }
     }
-
-    return ret;
 }
