@@ -7,6 +7,7 @@ Inspired by [From coding to hacking: An introduction guide to practical (externa
 
 ## Useful links:
 - [Rust Language](https://www.rust-lang.org/)
+- [Crate winapi](https://docs.rs/winapi/0.3.9/winapi/index.html)
 - [OpenProcess function](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess?redirectedfrom=MSDN)
 - [ReadProcessMemory function](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory?redirectedfrom=MSDN)
 - [WriteProcessMemory function](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory?redirectedfrom=MSDN)

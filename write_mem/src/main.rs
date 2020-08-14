@@ -1,6 +1,6 @@
 use winapi;                                         // https://docs.rs/winapi/0.3.9/winapi/index.html -> very useful
 use winapi::shared::ntdef::{HANDLE, NULL};          // You need to enable this as feature in Cargo.toml
-use winapi::shared::minwindef::{FALSE, LPVOID};
+use winapi::shared::minwindef::{FALSE, LPCVOID};
 use winapi::um::winnt::PROCESS_ALL_ACCESS;
 use winapi::um::processthreadsapi::OpenProcess;     // You need to enable this as feature in Cargo.toml
 use winapi::um::handleapi::CloseHandle;             // You need to enable this as feature in Cargo.toml
@@ -59,7 +59,7 @@ fn write_mem<T: Default>(proc_h: HANDLE, address: u64, mut value: T) {
 
     unsafe {
         let wpm_return = WriteProcessMemory(proc_h, address as *mut _, 
-            &mut value as *mut T as LPVOID, std::mem::size_of::<T>(), 
+            &mut value as *mut T as LPCVOID, std::mem::size_of::<T>(), 
             NULL as *mut usize);
         if wpm_return == FALSE {
             println!("WriteProcessMemory failed. Error: {:?}", std::io::Error::last_os_error());
